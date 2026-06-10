@@ -3,10 +3,14 @@
 namespace App\Mail;
 
 use App\Models\Booking;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Queue\SerializesModels;
 
-class PaymentReceiptMail extends Mailable
+class PaymentReceiptMail extends Mailable implements ShouldQueue
 {
+    use Queueable, SerializesModels;
     public $booking;
     public $pdfPath;
 

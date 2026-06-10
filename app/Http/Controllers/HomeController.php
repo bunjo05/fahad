@@ -57,7 +57,7 @@ class HomeController extends Controller
 
         $contact = Contact::create($validatedData);
 
-        Mail::to('bunjosteven5@gmail.com')
+        Mail::to('admin@nilephotography.de')
             ->send(new ContactCreated($contact));
 
         return redirect()
@@ -78,7 +78,7 @@ class HomeController extends Controller
 
         $booking = Booking::create($validatedData);
 
-        Mail::to('bunjosteven5@gmail.com')
+        Mail::to('admin@nilephotography.de')
             ->send(new BookingCreated($booking));
 
         return redirect()

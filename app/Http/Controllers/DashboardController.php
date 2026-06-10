@@ -19,7 +19,42 @@ class DashboardController extends Controller
 {
     public function dashboard()
     {
-        return inertia('Dashboard/Dashboard');
+        return inertia('Dashboard/Dashboard', [
+            'stats' => [
+
+                // Totals
+                'totalBookings' => Booking::count(),
+                'totalContacts' => Contact::count(),
+                'totalPortfolio' => Portfolio::count(),
+
+                // Booking Status
+                'pendingBookings' => Booking::where('status', 'pending')->count(),
+                'confirmedBookings' => Booking::where('status', 'confirmed')->count(),
+                'cancelledBookings' => Booking::where('status', 'cancelled')->count(),
+
+                // Payment Status
+                'pendingPayments' => Booking::where('payment_status', 'pending')->count(),
+                'paidPayments' => Booking::where('payment_status', 'paid')->count(),
+                'failedPayments' => Booking::where('payment_status', 'failed')->count(),
+                'refundedPayments' => Booking::where('payment_status', 'refunded')->count(),
+
+                // Contacts
+                'unreadContacts' => Contact::where('status', 'unread')->count(),
+                'readContacts' => Contact::where('status', 'read')->count(),
+
+                // Revenue
+                'totalRevenue' => Booking::where('payment_status', 'paid')
+                    ->sum('amount'),
+            ],
+
+            'recentBookings' => Booking::latest()
+                ->take(5)
+                ->get(),
+
+            'recentContacts' => Contact::latest()
+                ->take(5)
+                ->get(),
+        ]);
     }
 
     public function bookings()
@@ -79,7 +114,7 @@ class DashboardController extends Controller
             $invoicePdf->save($invoicePath);
 
             Mail::to($booking->email)
-                ->send(new BookingConfirmation(
+                ->queue(new BookingConfirmation(
                     $booking,
                     $invoicePath
                 ));
@@ -108,7 +143,7 @@ class DashboardController extends Controller
             $receiptPdf->save($receiptPath);
 
             Mail::to($booking->email)
-                ->send(
+                ->queue(
                     new PaymentReceiptMail(
                         $booking,
                         $receiptPath

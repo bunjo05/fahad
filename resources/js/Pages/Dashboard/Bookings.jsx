@@ -325,6 +325,22 @@ export default function Bookings({ bookings }) {
                                             </p>
                                         </div>
                                     )}
+
+                                    <button
+                                        onClick={() => {
+                                            setSelectedBooking(booking);
+
+                                            setData({
+                                                amount: booking.amount || "",
+                                                payment_status:
+                                                    booking.payment_status ||
+                                                    "pending",
+                                            });
+                                        }}
+                                        className="rounded-lg bg-amber-500 px-4 py-2 text-xs font-medium text-white transition hover:bg-amber-600"
+                                    >
+                                        View
+                                    </button>
                                 </div>
                             </div>
                         ))
