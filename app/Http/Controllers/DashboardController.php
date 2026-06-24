@@ -73,6 +73,7 @@ class DashboardController extends Controller
         ]);
 
         $oldPaymentStatus = $booking->payment_status;
+        $oldAmount = $booking->amount;
 
         $data = [];
 
@@ -99,8 +100,8 @@ class DashboardController extends Controller
     */
 
         if (
-            !$oldPaymentStatus &&
-            $booking->amount
+            is_null($oldAmount) &&
+            !is_null($booking->amount)
         ) {
             $invoicePdf = Pdf::loadView(
                 'pdf.invoice',
@@ -114,7 +115,7 @@ class DashboardController extends Controller
             $invoicePdf->save($invoicePath);
 
             Mail::to($booking->email)
-                ->queue(new BookingConfirmation(
+                ->send(new BookingConfirmation(
                     $booking,
                     $invoicePath
                 ));
@@ -143,7 +144,7 @@ class DashboardController extends Controller
             $receiptPdf->save($receiptPath);
 
             Mail::to($booking->email)
-                ->queue(
+                ->send(
                     new PaymentReceiptMail(
                         $booking,
                         $receiptPath
